@@ -45,6 +45,17 @@
             font-weight: 700;
             color: var(--text-main) !important;
             letter-spacing: -0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .navbar-logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .nav-link {
@@ -55,6 +66,39 @@
 
         .nav-link:hover {
             color: var(--brand-color) !important;
+        }
+
+        .profile-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(16, 185, 129, 0.9));
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .dropdown-menu-dark-custom {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .dropdown-menu-dark-custom .dropdown-item {
+            color: var(--text-muted);
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .dropdown-menu-dark-custom .dropdown-item:hover {
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--text-main);
         }
 
         .footer-custom {
@@ -87,7 +131,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'index' %}">Retail purchase intelligence system</a>
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Retail purchase intelligence system" class="navbar-logo">
+                <span>Retail purchase intelligence system</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
                 aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -97,12 +144,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'index' %}">Home</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}"><span class="text-danger">Logout</span> {{ user.username }}</a>
+                        <a class="nav-link" href="{% url 'cart' %}">Cart</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
@@ -110,6 +157,23 @@
                     </li>
                     {% endif %}
                 </ul>
+                {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <a class="profile-avatar dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open profile menu">
+                        {{ user.username|first|upper }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark-custom">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class='bx bx-user me-2'></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'cart' %}"><i class='bx bx-cart me-2'></i>My Cart</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile' %}#saved-products"><i class='bx bx-bookmark me-2'></i>Saved Products</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile' %}#search-history"><i class='bx bx-history me-2'></i>Search History</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile' %}#account-settings"><i class='bx bx-cog me-2'></i>Account Settings</a></li>
+                        <li><a class="dropdown-item" href="{% url 'about' %}"><i class='bx bx-info-circle me-2'></i>About Project</a></li>
+                        <li><hr class="dropdown-divider border-secondary"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class='bx bx-log-out me-2'></i>Logout</a></li>
+                    </ul>
+                </div>
+                {% endif %}
                 <!-- <form class="d-flex">
                     <input class="form-control me-sm-2" type="search" placeholder="Search">
                     <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
@@ -137,8 +201,7 @@
         </div>
     </footer>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
 
 </html>

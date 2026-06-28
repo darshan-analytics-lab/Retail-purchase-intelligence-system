@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .about-hero,
+    .about-section {
+        background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 55%),
+                    linear-gradient(135deg, var(--bg-card) 0%, var(--bg-main) 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
+    }
+
+    .about-hero {
+        margin-top: 2rem;
+        padding: 3rem 2rem;
+    }
+
+    .about-section {
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .about-icon-panel {
+        width: 160px;
+        height: 160px;
+        border-radius: 28px;
+        background: rgba(59, 130, 246, 0.12);
+        border: 1px solid rgba(59, 130, 246, 0.24);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .about-icon-panel i {
+        font-size: 5rem;
+        color: var(--brand-color);
+    }
+
+    .feature-card,
+    .tech-card,
+    .developer-card {
+        background: rgba(30, 41, 59, 0.88);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.25rem;
+        height: 100%;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .feature-card:hover,
+    .tech-card:hover,
+    .developer-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+        border-color: rgba(59, 130, 246, 0.35);
+    }
+
+    .feature-icon,
+    .tech-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: rgba(59, 130, 246, 0.12);
+        color: var(--brand-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.55rem;
+        margin-bottom: 1rem;
+    }
+
+    .developer-photo {
+        width: 132px;
+        height: 132px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(59, 130, 246, 0.2));
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        overflow: hidden;
+        padding: 0.2rem;
+    }
+
+    .developer-photo img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+    }
+</style>
+
+<section class="about-hero">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <div class="auth-kicker mb-3" style="color: var(--brand-color); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">About Project</div>
+            <h1 class="fw-bold text-white mb-3">Retail Purchase Intelligence System</h1>
+            <p class="text-muted fs-5 mb-0">A modern intelligent shopping comparison platform that helps users compare products across multiple online marketplaces including electronics and grocery platforms.</p>
+        </div>
+        <div class="col-lg-4 text-center">
+            <div class="about-icon-panel">
+                <i class='bx bx-store-alt'></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-section mt-4">
+    <h3 class="fw-bold text-white mb-3">About the Project</h3>
+    <p class="text-muted mb-3">The Retail Purchase Intelligence System is built to simplify product research by bringing comparison data from multiple online platforms into one focused shopping experience. Users can compare electronics, groceries, and related products without manually opening several marketplaces.</p>
+    <p class="text-muted mb-0">The project solves the everyday problem of fragmented pricing by combining smart product categorization, price comparison, product images, platform branding, and intelligent ranking. It helps users quickly identify relevant products, compare prices, and make better purchase decisions through a modern, responsive interface.</p>
+</section>
+
+<section class="about-section">
+    <h3 class="fw-bold text-white mb-4">Key Features</h3>
+    <div class="row g-4">
+        {% for feature in features %}
+        <div class="col-sm-6 col-lg-4">
+            <div class="feature-card">
+                <div class="feature-icon"><i class='bx bx-check-shield'></i></div>
+                <h6 class="fw-bold text-white mb-2">{{ feature }}</h6>
+                <p class="text-muted small mb-0">Designed for fast comparison and clear product discovery.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="about-section">
+    <h3 class="fw-bold text-white mb-4">Technology Stack</h3>
+    <div class="row g-4">
+        {% for tech in tech_stack %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="tech-card text-center">
+                <div class="tech-icon"><i class='bx bx-code-alt'></i></div>
+                <div class="fw-semibold text-white">{{ tech }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="about-section">
+    <h3 class="fw-bold text-white mb-4">Meet Our Developers</h3>
+    <div class="row g-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="developer-card text-center">
+                <div class="developer-photo">
+                    <img src="{% static 'images/darshan.png' %}" alt="Darshan Kangane">
+                </div>
+                <h6 class="fw-bold text-white mb-1">Darshan Kangane</h6>
+                <p class="text-muted small mb-0">Project Lead &amp; Full Stack Developer</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="developer-card text-center">
+                <div class="developer-photo">
+                    <img src="{% static 'images/vyankatesh.png' %}" alt="Vyankatesh Bairagi">
+                </div>
+                <h6 class="fw-bold text-white mb-1">Vyankatesh Bairagi</h6>
+                <p class="text-muted small mb-0">Developer</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="developer-card text-center">
+                <div class="developer-photo">
+                    <img src="{% static 'images/sakshi.png' %}" alt="Sakshi Godse">
+                </div>
+                <h6 class="fw-bold text-white mb-1">Sakshi Godse</h6>
+                <p class="text-muted small mb-0">Developer</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="developer-card text-center">
+                <div class="developer-photo">
+                    <img src="{% static 'images/vishaka.png' %}" alt="Vishakha Ganore">
+                </div>
+                <h6 class="fw-bold text-white mb-1">Vishakha Ganore</h6>
+                <p class="text-muted small mb-0">Developer</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

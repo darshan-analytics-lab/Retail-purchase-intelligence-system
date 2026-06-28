@@ -1,7 +1,10 @@
 from bs4 import BeautifulSoup
-from django.test import SimpleTestCase
+from django.contrib.auth.models import User
+from django.test import SimpleTestCase, TestCase
+from django.urls import reverse
 from unittest.mock import patch
 
+from account.models import SearchHistory
 from home.views import (
     CATEGORY_ACCESSORY,
     CATEGORY_ELECTRONICS,
@@ -13,6 +16,25 @@ from home.views import (
     expand_search_queries,
     extract_product_image,
 )
+
+
+class HomePageViewTests(TestCase):
+    def test_about_page_renders(self):
+        response = self.client.get(reverse('about'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Retail Purchase Intelligence System')
+        self.assertContains(response, 'Meet Our Developers')
+
+    @patch('home.views.collect_grocery_results', return_value=[])
+    def test_authenticated_search_is_saved_to_history(self, _):
+        User.objects.create_user(username='searchuser', password='StrongPass123!')
+        self.client.login(username='searchuser', password='StrongPass123!')
+
+        response = self.client.get(reverse('index'), {'search': 'milk', 'category': 'grocery'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(SearchHistory.objects.filter(query='milk', category='grocery').exists())
 
 
 class ProductImageExtractionTests(SimpleTestCase):

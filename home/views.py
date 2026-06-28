@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.urls import reverse
 from django.contrib import messages
 from django.db import IntegrityError
+from account.models import SearchHistory
 from bs4 import BeautifulSoup
 import requests
 import random
@@ -110,12 +111,13 @@ CATEGORY_CARDS = [
     {'name': 'Wearables', 'icon': '⌚', 'search': 'smartwatch', 'category': CATEGORY_ELECTRONICS},
     {'name': 'Fruits', 'icon': '🍎', 'search': 'apple fruit', 'category': CATEGORY_GROCERY},
     {'name': 'Dairy', 'icon': '🥛', 'search': 'milk', 'category': CATEGORY_GROCERY},
-    {'name': 'Vegetables', 'icon': '🥦', 'search': 'vegetable', 'category': CATEGORY_GROCERY},
-    {'name': 'Snacks', 'icon': '🍪', 'search': 'snack', 'category': CATEGORY_GROCERY},
-    {'name': 'Beverages', 'icon': '🥤', 'search': 'beverage', 'category': CATEGORY_GROCERY},
-    {'name': 'Personal Care', 'icon': '🧴', 'search': 'shampoo', 'category': CATEGORY_GROCERY},
-    {'name': 'Cleaning', 'icon': '🧼', 'search': 'cleaning', 'category': CATEGORY_GROCERY},
-    {'name': 'Household', 'icon': '🏠', 'search': 'household', 'category': CATEGORY_GROCERY},
+#     {'name': 'Vegetables', 'icon': '🥦', 'search': 'vegetable', 'category': CATEGORY_GROCERY},
+#     {'name': 'Snacks', 'icon': '🍪', 'search': 'snack', 'category': CATEGORY_GROCERY},
+#     {'name': 'Beverages', 'icon': '🥤', 'search': 'beverage', 'category': CATEGORY_GROCERY},
+#     {'name': 'Personal Care', 'icon': '🧴', 'search': 'shampoo', 'category': CATEGORY_GROCERY},
+#     {'name': 'Cleaning', 'icon': '🧼', 'search': 'cleaning', 'category': CATEGORY_GROCERY},
+#     {'name': 'Household', 'icon': '🏠', 'search': 'household', 'category': CATEGORY_GROCERY},
+# 
 ]
 
 PROMO_BANNERS = [
@@ -1144,6 +1146,14 @@ def index(request):
         
         content['active_category'] = category
 
+        if request.user.is_authenticated:
+            SearchHistory.objects.update_or_create(
+                user=request.user,
+                query=search,
+                category=category,
+                defaults={},
+            )
+
         if category == CATEGORY_GROCERY:
             # Run grocery scraping flow
             relevant_total = collect_grocery_results(search)
@@ -1192,3 +1202,33 @@ def index(request):
             content['category_title'] = get_category_title(search, category)
 
     return render(request, 'index.html', content)
+
+
+def about(request):
+    context = {
+        'title': 'About Project',
+        'features': [
+            'Smart Product Search',
+            'Lowest Price Detection',
+            'Multi Platform Comparison',
+            'Electronics Comparison',
+            'Grocery Comparison',
+            'Product Images',
+            'Platform Logos',
+            'Responsive Design',
+            'Modern User Interface',
+            'Future AI Recommendation Support',
+        ],
+        'tech_stack': [
+            'Python',
+            'Django',
+            'HTML',
+            'CSS',
+            'JavaScript',
+            'SQLite/MySQL',
+            'BeautifulSoup',
+            'Requests',
+            'Bootstrap',
+        ],
+    }
+    return render(request, 'about.html', context)

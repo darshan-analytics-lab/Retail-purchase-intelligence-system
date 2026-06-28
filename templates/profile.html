@@ -1,84 +1,210 @@
 {% extends 'account.html' %}
 {% load static %}
 {% block content %}
-<div class="auth-shell">
+<style>
+    .profile-shell {
+        margin: 2rem auto 0;
+    }
+
+    .profile-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+    }
+
+    .profile-avatar-large {
+        width: 128px;
+        height: 128px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(16, 185, 129, 0.85));
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: 800;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 1rem;
+    }
+
+    .profile-stat {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1rem;
+    }
+
+    .history-chip {
+        border: 1px solid var(--border-color);
+        border-radius: 999px;
+        color: var(--text-muted);
+        padding: 0.45rem 0.9rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .history-chip:hover {
+        color: var(--text-main);
+        border-color: rgba(59, 130, 246, 0.34);
+        background: rgba(59, 130, 246, 0.1);
+    }
+
+    .mini-product {
+        display: flex;
+        gap: 0.85rem;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .mini-product:first-child {
+        border-top: 0;
+        padding-top: 0;
+    }
+
+    .mini-product img {
+        width: 54px;
+        height: 54px;
+        border-radius: 10px;
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 0.35rem;
+    }
+</style>
+
+<div class="profile-shell">
     <div class="row g-4">
         <div class="col-lg-4">
-            <div class="profile-card h-100">
-                <div class="auth-kicker mb-2">Profile</div>
-                <h3 class="fw-bold text-white mb-1">
-                    {{ user.get_full_name|default:user.username }}
-                </h3>
+            <div class="profile-card h-100" id="account-settings">
+                <div class="profile-avatar-large">{{ user.username|first|upper }}</div>
+                <h3 class="fw-bold text-white mb-1">{{ user.get_full_name|default:user.username }}</h3>
                 <p class="text-muted mb-4">@{{ user.username }}</p>
 
                 <div class="border-top border-secondary-subtle pt-3">
                     <div class="small text-muted mb-1">Email</div>
                     <div class="text-white mb-3">{{ user.email|default:'Not added' }}</div>
                     <div class="small text-muted mb-1">Mobile</div>
-                    <div class="text-white mb-0">
-                        {% if profile and profile.mobile %}
-                            {{ profile.mobile }}
-                        {% else %}
-                            Not added
-                        {% endif %}
-                    </div>
+                    <div class="text-white mb-3">{% if profile and profile.mobile %}{{ profile.mobile }}{% else %}Not added{% endif %}</div>
+                    <div class="small text-muted mb-1">Member Since</div>
+                    <div class="text-white">{{ user.date_joined|date:"M d, Y" }}</div>
                 </div>
 
                 <div class="d-grid gap-2 mt-4">
-                    <a href="{% url 'index' %}" class="btn btn-primary" style="border-radius: 8px;">Search Products</a>
+                    <button type="button" class="btn btn-primary" style="border-radius: 8px;" disabled>Edit Profile</button>
+                    <button type="button" class="btn btn-outline-primary" style="border-radius: 8px;" disabled>Change Password</button>
                     <a href="{% url 'logout' %}" class="btn btn-outline-danger" style="border-radius: 8px;">Logout</a>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-8">
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="profile-stat">
+                        <div class="small text-muted mb-1">Cart Items</div>
+                        <div class="h4 fw-bold text-white mb-0">{{ cart_total_items }}</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="profile-stat">
+                        <div class="small text-muted mb-1">Recent Searches</div>
+                        <div class="h4 fw-bold text-white mb-0">{{ recent_searches|length }}</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="profile-stat">
+                        <div class="small text-muted mb-1">Saved Products</div>
+                        <div class="h4 fw-bold text-white mb-0">0</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="profile-card mb-4">
-                <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                    <div>
+                        <div class="auth-kicker mb-2">My Cart</div>
+                        <h4 class="fw-bold text-white mb-0">Cart summary</h4>
+                    </div>
+                    <a href="{% url 'cart' %}" class="btn btn-sm btn-outline-primary" style="border-radius: 8px;">Open Cart</a>
+                </div>
+                <p class="text-muted mb-3">Total Items: {{ cart_total_items }}</p>
+                {% if recent_cart_items %}
+                    {% for item in recent_cart_items %}
+                    <div class="mini-product">
+                        {% if item.product_image %}
+                            {% if item.is_static_product_image %}
+                                <img src="{% static item.product_image %}" alt="{{ item.product_name }}" onerror="this.onerror=null;this.src='{% static 'images/default_product.png' %}';">
+                            {% else %}
+                                <img src="{{ item.product_image }}" alt="{{ item.product_name }}" onerror="this.onerror=null;this.src='{% static 'images/default_product.png' %}';">
+                            {% endif %}
+                        {% else %}
+                            <img src="{% static 'images/default_product.png' %}" alt="{{ item.product_name }}">
+                        {% endif %}
+                        <div>
+                            <div class="fw-semibold text-white small">{{ item.product_name }}</div>
+                            <div class="text-muted small">{{ item.platform }} - ₹{{ item.price }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted mb-0">No products in cart yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="profile-card mb-4" id="search-history">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
                     <div>
                         <div class="auth-kicker mb-2">Search History</div>
                         <h4 class="fw-bold text-white mb-0">Recent searches</h4>
                     </div>
                     <a href="{% url 'index' %}" class="btn btn-sm btn-outline-primary" style="border-radius: 8px;">New Search</a>
                 </div>
-                <div id="profile-search-history" class="d-flex flex-wrap gap-2"></div>
-                <p id="profile-search-empty" class="text-muted mb-0">No recent searches yet.</p>
+                {% if recent_searches %}
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for search in recent_searches %}
+                            <a href="{% url 'index' %}?search={{ search.query|urlencode }}&category={{ search.category|urlencode }}" class="history-chip">
+                                <i class='bx bx-search'></i> {{ search.query }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">No recent searches yet.</p>
+                {% endif %}
             </div>
 
-            <div class="profile-card">
-                <div class="auth-kicker mb-2">Saved Products</div>
-                <h4 class="fw-bold text-white mb-2">Saved products</h4>
-                <p class="text-muted mb-0">Saved products will appear here when product saving is added.</p>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="profile-card h-100" id="saved-products">
+                        <div class="auth-kicker mb-2">Saved Products</div>
+                        <h4 class="fw-bold text-white mb-2">Saved products</h4>
+                        <p class="text-muted mb-0">Saved products will appear here when product saving is enabled.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="profile-card h-100">
+                        <div class="auth-kicker mb-2">Recent Activity</div>
+                        <h4 class="fw-bold text-white mb-3">Activity</h4>
+                        {% if recent_activity %}
+                            {% for activity in recent_activity %}
+                            <div class="d-flex gap-2 align-items-start mb-3">
+                                <i class='bx {{ activity.icon }} text-primary mt-1'></i>
+                                <div>
+                                    <div class="text-white small">{{ activity.label }}</div>
+                                    <div class="text-muted small">{{ activity.timestamp|date:"M d, H:i" }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted mb-0">Your recent account activity will appear here.</p>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const historyBox = document.getElementById("profile-search-history");
-        const emptyText = document.getElementById("profile-search-empty");
-        let recents = [];
-
-        try {
-            recents = JSON.parse(localStorage.getItem("price_compare_recent_searches")) || [];
-        } catch (e) {
-            recents = [];
-        }
-
-        if (!recents.length) {
-            emptyText.classList.remove("d-none");
-            return;
-        }
-
-        emptyText.classList.add("d-none");
-        recents.forEach(function(term) {
-            const link = document.createElement("a");
-            link.href = "/?search=" + encodeURIComponent(term);
-            link.className = "auth-link border border-secondary-subtle px-3 py-2";
-            link.style.borderRadius = "999px";
-            link.textContent = term;
-            historyBox.appendChild(link);
-        });
-    });
-</script>
 {% endblock %}

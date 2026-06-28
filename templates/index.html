@@ -440,9 +440,22 @@
                         </div>
                         {% endif %}
                         
-                        <!-- Outbound Buy Now Button -->
-                        <div class="mt-3">
+                        <!-- Cart and outbound actions -->
+                        <div class="mt-3 d-grid gap-2">
                             {% if user.is_authenticated %}
+                                <form action="{% url 'add_to_cart' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_name" value="{{ i.product_name }}">
+                                    <input type="hidden" name="price" value="{{ i.price }}">
+                                    <input type="hidden" name="platform" value="{{ i.platform_name }}">
+                                    <input type="hidden" name="product_image" value="{{ i.img }}">
+                                    <input type="hidden" name="product_url" value="{{ i.a }}">
+                                    <input type="hidden" name="platform_logo" value="{{ i.platform_logo }}">
+                                    <input type="hidden" name="category" value="{{ active_category }}">
+                                    <button type="submit" class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
+                                        <i class='bx bx-cart-add'></i> Add to Cart
+                                    </button>
+                                </form>
                                 <a href="{{ i.a }}" target="_blank" class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
                                     <i class='bx bx-shopping-bag'></i> Buy Now
                                 </a>
@@ -512,8 +525,21 @@
                         </div>
                         {% endif %}
                         
-                        <div class="mt-3">
+                        <div class="mt-3 d-grid gap-2">
                             {% if user.is_authenticated %}
+                                <form action="{% url 'add_to_cart' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_name" value="{{ i.product_name }}">
+                                    <input type="hidden" name="price" value="{{ i.price }}">
+                                    <input type="hidden" name="platform" value="{{ i.platform_name }}">
+                                    <input type="hidden" name="product_image" value="{{ i.img }}">
+                                    <input type="hidden" name="product_url" value="{{ i.a }}">
+                                    <input type="hidden" name="platform_logo" value="{{ i.platform_logo }}">
+                                    <input type="hidden" name="category" value="{{ active_category }}">
+                                    <button type="submit" class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
+                                        <i class='bx bx-cart-add'></i> Add to Cart
+                                    </button>
+                                </form>
                                 <a href="{{ i.a }}" target="_blank" class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
                                     <i class='bx bx-shopping-bag'></i> Buy Now
                                 </a>

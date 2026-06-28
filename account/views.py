@@ -6,8 +6,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.db import IntegrityError
-from django.shortcuts import render
-from account.models import Profile
+from django.shortcuts import get_object_or_404, render
+from decimal import Decimal, InvalidOperation
+from account.models import CartItem, Profile
 
 
 def signup(request):
@@ -114,6 +115,14 @@ def logout(request):
     return HttpResponseRedirect(reverse('login'))
 
 
+def _clean_price(value):
+    cleaned = str(value or '0').replace(',', '').replace('₹', '').strip()
+    try:
+        return Decimal(cleaned)
+    except (InvalidOperation, ValueError):
+        return Decimal('0')
+
+
 @login_required(login_url='login')
 def profile(request):
     try:
@@ -121,8 +130,99 @@ def profile(request):
     except Profile.DoesNotExist:
         profile_obj = None
 
+    cart_items = CartItem.objects.filter(user=request.user)
+    recent_cart_items = cart_items[:3]
+    recent_searches = request.user.search_history.all()[:6]
+    recent_activity = []
+
+    for item in recent_cart_items:
+        recent_activity.append({
+            'icon': 'bx-cart-add',
+            'label': f'Added {item.product_name}',
+            'timestamp': item.created_at,
+        })
+    for search in recent_searches[:3]:
+        recent_activity.append({
+            'icon': 'bx-search',
+            'label': f'Searched for {search.query}',
+            'timestamp': search.searched_at,
+        })
+    recent_activity = sorted(recent_activity, key=lambda item: item['timestamp'], reverse=True)[:5]
+
     content = {
         'title': 'Profile',
         'profile': profile_obj,
+        'cart_items': cart_items,
+        'cart_total_items': sum(item.quantity for item in cart_items),
+        'recent_cart_items': recent_cart_items,
+        'recent_searches': recent_searches,
+        'recent_activity': recent_activity,
     }
     return render(request, 'profile.html', content)
+
+
+@login_required(login_url='login')
+def cart(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    content = {
+        'title': 'My Cart',
+        'cart_items': cart_items,
+        'cart_total_items': sum(item.quantity for item in cart_items),
+    }
+    return render(request, 'cart.html', content)
+
+
+@login_required(login_url='login')
+def add_to_cart(request):
+    if request.method != 'POST':
+        return HttpResponseRedirect(reverse('index'))
+
+    product_name = request.POST.get('product_name', '').strip()
+    product_url = request.POST.get('product_url', '').strip()
+    platform = request.POST.get('platform', '').strip()
+
+    if not product_name or not platform:
+        messages.error(request, 'Unable to add this product to cart.')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('index')))
+
+    item, created = CartItem.objects.get_or_create(
+        user=request.user,
+        product_name=product_name,
+        platform=platform,
+        product_url=product_url,
+        defaults={
+            'price': _clean_price(request.POST.get('price')),
+            'product_image': request.POST.get('product_image', '').strip(),
+            'platform_logo': request.POST.get('platform_logo', '').strip(),
+            'category': request.POST.get('category', '').strip(),
+            'quantity': 1,
+        },
+    )
+
+    if not created:
+        item.quantity += 1
+        item.price = _clean_price(request.POST.get('price'))
+        item.product_image = request.POST.get('product_image', item.product_image).strip()
+        item.platform_logo = request.POST.get('platform_logo', item.platform_logo).strip()
+        item.category = request.POST.get('category', item.category).strip()
+        item.save()
+
+    messages.success(request, 'Product added to cart.')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('cart')))
+
+
+@login_required(login_url='login')
+def remove_cart_item(request, item_id):
+    if request.method == 'POST':
+        item = get_object_or_404(CartItem, id=item_id, user=request.user)
+        item.delete()
+        messages.success(request, 'Product removed from cart.')
+    return HttpResponseRedirect(reverse('cart'))
+
+
+@login_required(login_url='login')
+def clear_cart(request):
+    if request.method == 'POST':
+        CartItem.objects.filter(user=request.user).delete()
+        messages.success(request, 'Cart cleared.')
+    return HttpResponseRedirect(reverse('cart'))

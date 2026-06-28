@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from account.models import Profile
+from account.models import CartItem, Profile
 
 
 class AccountAuthTests(TestCase):
@@ -61,3 +61,29 @@ class AccountAuthTests(TestCase):
 
         self.assertContains(response, 'Profile User')
         self.assertContains(response, '9999999999')
+
+    def test_add_to_cart_persists_for_authenticated_user(self):
+        User.objects.create_user(username='cartuser', password='StrongPass123!')
+        self.client.login(username='cartuser', password='StrongPass123!')
+
+        response = self.client.post(reverse('add_to_cart'), {
+            'product_name': 'Test Phone',
+            'price': '12999',
+            'platform': 'Amazon',
+            'product_image': 'images/default_product.png',
+            'product_url': 'https://example.com/product',
+            'platform_logo': 'images/amazon.svg',
+            'category': 'electronics',
+        })
+
+        self.assertEqual(response.status_code, 302)
+        item = CartItem.objects.get(product_name='Test Phone')
+        self.assertEqual(item.platform, 'Amazon')
+        self.assertEqual(item.quantity, 1)
+
+        self.client.logout()
+        self.client.login(username='cartuser', password='StrongPass123!')
+        response = self.client.get(reverse('cart'))
+
+        self.assertContains(response, 'Test Phone')
+        self.assertContains(response, 'Amazon')
