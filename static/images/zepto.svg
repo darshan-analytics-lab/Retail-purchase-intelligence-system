@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="100%" height="100%">
+  <rect width="120" height="40" rx="8" fill="#5F259F"/>
+  <text x="15" y="26" font-family="'Inter', sans-serif" font-weight="800" font-size="18" fill="#FFFFFF" letter-spacing="-0.5px">zepto</text>
+  <circle cx="95" cy="20" r="5" fill="#FFC72C"/>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="100%" height="100%">
+  <rect width="120" height="40" rx="8" fill="#F7EC13"/>
+  <text x="12" y="26" font-family="'Inter', sans-serif" font-weight="800" font-size="18" fill="#000000" letter-spacing="-0.5px">blinkit</text>
+  <circle cx="98" cy="20" r="6" fill="#000000"/>
+  <path d="M95 20h6" stroke="#F7EC13" stroke-width="2" stroke-linecap="round"/>
+</svg>

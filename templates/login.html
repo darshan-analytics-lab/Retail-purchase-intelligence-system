@@ -1,0 +1,68 @@
+{% extends 'account.html' %}
+{% load static %}
+{% block content %}
+<div class="auth-shell">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-lg-5">
+            <div class="auth-side-panel">
+                <div>
+                    <div class="auth-kicker mb-3">Retail Intelligence</div>
+                    <h2 class="fw-bold text-white mb-3">Welcome back</h2>
+                    <p class="text-muted mb-0">Sign in to compare prices, open store links, and keep your recent searches close.</p>
+                </div>
+                <div class="row g-3 mt-4">
+                    <div class="col-6">
+                        <div class="auth-stat">
+                            <div class="h4 fw-bold mb-1 text-white">11+</div>
+                            <div class="small text-muted">Platforms</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="auth-stat">
+                            <div class="h4 fw-bold mb-1 text-white">Live</div>
+                            <div class="small text-muted">Comparison</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="auth-card">
+                <div class="mb-4">
+                    <div class="auth-kicker mb-2">Login</div>
+                    <h4 class="fw-bold text-white mb-1">Access your account</h4>
+                    <p class="text-muted mb-0">Use your username and password to continue.</p>
+                </div>
+
+                <form action="{% url 'login' %}" method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" id="username" class="form-control form-control-lg"
+                               value="{{ form_data.username|default:'' }}" placeholder="Enter username" autocomplete="username" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" class="form-control form-control-lg"
+                               placeholder="Enter password" autocomplete="current-password" required>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="remember_me" name="remember_me"
+                                   {% if form_data.remember_me %}checked{% endif %}>
+                            <label class="form-check-label text-muted" for="remember_me">Remember me</label>
+                        </div>
+                        <a href="#" class="auth-link">Forgot Password?</a>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg fw-semibold" style="border-radius: 8px;">Login</button>
+                    </div>
+                </form>
+                <div class="text-center mt-4">
+                    <p class="text-muted mb-0">Don't have an account? <a href="{% url 'signup' %}" class="auth-link">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

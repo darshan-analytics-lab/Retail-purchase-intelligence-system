@@ -1,0 +1,82 @@
+{% extends 'account.html' %}
+{% load static %}
+{% block content %}
+<div class="auth-shell">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-lg-5">
+            <div class="auth-side-panel">
+                <div>
+                    <div class="auth-kicker mb-3">Create Account</div>
+                    <h2 class="fw-bold text-white mb-3">Compare smarter</h2>
+                    <p class="text-muted mb-0">Create an account to unlock store links and keep your purchase research organized.</p>
+                </div>
+                <div class="row g-3 mt-4">
+                    <div class="col-6">
+                        <div class="auth-stat">
+                            <div class="h4 fw-bold mb-1 text-white">Fast</div>
+                            <div class="small text-muted">Search</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="auth-stat">
+                            <div class="h4 fw-bold mb-1 text-white">Secure</div>
+                            <div class="small text-muted">Login</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="auth-card">
+                <div class="mb-4">
+                    <div class="auth-kicker mb-2">Signup</div>
+                    <h4 class="fw-bold text-white mb-1">Create your account</h4>
+                    <p class="text-muted mb-0">Use a strong password and a unique username.</p>
+                </div>
+
+                <form action="{% url 'signup' %}" method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label for="full_name">Full Name</label>
+                            <input type="text" name="full_name" id="full_name" class="form-control"
+                                   value="{{ form_data.full_name|default:'' }}" placeholder="Enter full name" autocomplete="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="username">Username</label>
+                            <input type="text" name="username" id="username" class="form-control"
+                                   value="{{ form_data.username|default:'' }}" placeholder="Create username" autocomplete="username" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email" class="form-control"
+                                   value="{{ form_data.email|default:'' }}" placeholder="Enter email" autocomplete="email" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="mobile">Mobile <span class="text-muted fw-normal">(optional)</span></label>
+                            <input type="tel" name="mobile" id="mobile" class="form-control"
+                                   value="{{ form_data.mobile|default:'' }}" placeholder="Enter mobile number" autocomplete="tel" maxlength="10">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control"
+                                   placeholder="Create password" autocomplete="new-password" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="confirm_password">Confirm Password</label>
+                            <input type="password" name="confirm_password" id="confirm_password" class="form-control"
+                                   placeholder="Confirm password" autocomplete="new-password" required>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg fw-semibold" style="border-radius: 8px;">Create Account</button>
+                    </div>
+                </form>
+                <div class="text-center mt-4">
+                    <p class="text-muted mb-0">Already have an account? <a href="{% url 'login' %}" class="auth-link">Log in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

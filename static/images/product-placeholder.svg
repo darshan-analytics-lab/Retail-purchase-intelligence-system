@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" role="img" aria-labelledby="title desc">
+  <title id="title">Product image unavailable</title>
+  <desc id="desc">A neutral placeholder for product cards when the source image is unavailable.</desc>
+  <rect width="320" height="240" rx="16" fill="#111827"/>
+  <rect x="52" y="44" width="216" height="152" rx="14" fill="#1f2937" stroke="#374151" stroke-width="2"/>
+  <circle cx="116" cy="96" r="18" fill="#475569"/>
+  <path d="M70 176l58-58 42 42 26-26 54 42H70z" fill="#334155"/>
+  <path d="M70 176l58-58 42 42 26-26 54 42" fill="none" stroke="#64748b" stroke-width="4" stroke-linejoin="round"/>
+</svg>

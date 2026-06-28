@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="100%" height="100%">
+  <rect width="120" height="40" rx="8" fill="#FF5200"/>
+  <text x="10" y="25" font-family="'Inter', sans-serif" font-weight="800" font-size="14" fill="#FFFFFF" letter-spacing="-0.3px">instamart</text>
+  <path d="M100 12l5 8-5 8h-5l5-8-5-8z" fill="#FFFFFF"/>
+</svg>

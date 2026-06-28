@@ -1,0 +1,84 @@
+{% extends 'account.html' %}
+{% load static %}
+{% block content %}
+<div class="auth-shell">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="profile-card h-100">
+                <div class="auth-kicker mb-2">Profile</div>
+                <h3 class="fw-bold text-white mb-1">
+                    {{ user.get_full_name|default:user.username }}
+                </h3>
+                <p class="text-muted mb-4">@{{ user.username }}</p>
+
+                <div class="border-top border-secondary-subtle pt-3">
+                    <div class="small text-muted mb-1">Email</div>
+                    <div class="text-white mb-3">{{ user.email|default:'Not added' }}</div>
+                    <div class="small text-muted mb-1">Mobile</div>
+                    <div class="text-white mb-0">
+                        {% if profile and profile.mobile %}
+                            {{ profile.mobile }}
+                        {% else %}
+                            Not added
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{% url 'index' %}" class="btn btn-primary" style="border-radius: 8px;">Search Products</a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger" style="border-radius: 8px;">Logout</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="profile-card mb-4">
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+                    <div>
+                        <div class="auth-kicker mb-2">Search History</div>
+                        <h4 class="fw-bold text-white mb-0">Recent searches</h4>
+                    </div>
+                    <a href="{% url 'index' %}" class="btn btn-sm btn-outline-primary" style="border-radius: 8px;">New Search</a>
+                </div>
+                <div id="profile-search-history" class="d-flex flex-wrap gap-2"></div>
+                <p id="profile-search-empty" class="text-muted mb-0">No recent searches yet.</p>
+            </div>
+
+            <div class="profile-card">
+                <div class="auth-kicker mb-2">Saved Products</div>
+                <h4 class="fw-bold text-white mb-2">Saved products</h4>
+                <p class="text-muted mb-0">Saved products will appear here when product saving is added.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const historyBox = document.getElementById("profile-search-history");
+        const emptyText = document.getElementById("profile-search-empty");
+        let recents = [];
+
+        try {
+            recents = JSON.parse(localStorage.getItem("price_compare_recent_searches")) || [];
+        } catch (e) {
+            recents = [];
+        }
+
+        if (!recents.length) {
+            emptyText.classList.remove("d-none");
+            return;
+        }
+
+        emptyText.classList.add("d-none");
+        recents.forEach(function(term) {
+            const link = document.createElement("a");
+            link.href = "/?search=" + encodeURIComponent(term);
+            link.className = "auth-link border border-secondary-subtle px-3 py-2";
+            link.style.borderRadius = "999px";
+            link.textContent = term;
+            historyBox.appendChild(link);
+        });
+    });
+</script>
+{% endblock %}

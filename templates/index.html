@@ -1,0 +1,597 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    /* Hero section with Blinkit-inspired dark mode gradient */
+    .hero-section {
+        background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 60%), 
+                    linear-gradient(135deg, var(--bg-card) 0%, var(--bg-main) 100%);
+        border-radius: 20px;
+        padding: 3.5rem 2rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .search-box {
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 50px;
+        padding: 0.6rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .search-box:focus-within {
+        border-color: var(--brand-color);
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.25);
+    }
+    
+    .search-input {
+        background: transparent;
+        color: var(--text-main);
+        border: none;
+        box-shadow: none;
+        padding-left: 1.2rem;
+        font-size: 1.1rem;
+        border-radius: 50px;
+    }
+    
+    .search-input::placeholder {
+        color: var(--text-muted);
+    }
+    
+    .search-input:focus {
+        box-shadow: none;
+        outline: none;
+    }
+    
+    .search-btn {
+        border-radius: 50px;
+        padding: 0.6rem 2rem;
+        font-weight: 600;
+        background-color: var(--brand-color);
+        border: none;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+    
+    .search-btn:hover {
+        background-color: #2563eb;
+        transform: translateY(-1px);
+    }
+    
+    /* Category Section */
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+    
+    .category-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.2rem 0.8rem;
+        text-align: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        border-color: rgba(59, 130, 246, 0.4);
+        background: rgba(30, 41, 59, 0.8);
+    }
+    
+    .category-icon {
+        font-size: 2.2rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .category-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+    
+    /* Promo Banners */
+    .promo-banner {
+        border-radius: 16px;
+        padding: 1.8rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: #ffffff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: transform 0.2s ease;
+        text-decoration: none;
+    }
+    
+    .promo-banner:hover {
+        transform: scale(1.02);
+        color: #ffffff;
+    }
+    
+    .banner-blue {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    }
+    
+    .banner-green {
+        background: linear-gradient(135deg, #064e3b 0%, #10b981 100%);
+    }
+    
+    .banner-purple {
+        background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
+    }
+    
+    /* Recent Searches */
+    .recent-searches-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1rem;
+    }
+    
+    .recent-tag {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 50px;
+        padding: 0.3rem 0.9rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+    
+    .recent-tag:hover {
+        background: rgba(59, 130, 246, 0.15);
+        color: var(--brand-color);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    /* Platform icons grid */
+    .platform-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+        background: var(--bg-card);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+    }
+    
+    .platform-item {
+        height: 32px;
+        max-width: 100px;
+        filter: grayscale(30%) opacity(80%);
+        transition: filter 0.2s ease;
+        object-fit: contain;
+    }
+    
+    .platform-item:hover {
+        filter: grayscale(0%) opacity(100%);
+    }
+    
+    /* Product Cards styling matching premium layout */
+    .product-card {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 1.25rem;
+        height: 100%;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+    }
+    
+    .brand-logo-container {
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin-bottom: 0.75rem;
+    }
+    
+    .brand-logo {
+        max-height: 22px;
+        max-width: 85px;
+        object-fit: contain;
+    }
+    
+    .product-title {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-main);
+        margin-bottom: 0.75rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.7rem;
+    }
+    
+    .product-title a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .product-title a:hover {
+        color: var(--brand-color);
+    }
+    
+    .price-tag {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #f8fafc;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #64748b;
+    }
+    
+    .active-badge {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+    }
+
+    .quick-link-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .quick-link {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-color);
+        border-radius: 999px;
+        color: var(--text-muted);
+        padding: 0.45rem 0.9rem;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .quick-link:hover {
+        background: rgba(59, 130, 246, 0.12);
+        border-color: rgba(59, 130, 246, 0.35);
+        color: var(--text-main);
+    }
+</style>
+
+<!-- Hero Search Banner -->
+<div class="hero-section text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-8">
+            <!-- Active Category Badge -->
+            {% if search_query %}
+                <div class="mb-3">
+                    {% if active_category == 'grocery' %}
+                        <span class="active-badge bg-success-subtle text-success border border-success-subtle"><i class='bx bx-basket'></i> Smart Match: Grocery Category</span>
+                    {% elif active_category == 'accessory' %}
+                        <span class="active-badge bg-info-subtle text-info border border-info-subtle"><i class='bx bx-headphone'></i> Smart Match: Accessories Category</span>
+                    {% else %}
+                        <span class="active-badge bg-primary-subtle text-primary border border-primary-subtle"><i class='bx bx-mobile-alt'></i> Smart Match: Electronics Category</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            <h1 class="fw-bold mb-2 text-white" style="letter-spacing: -1.2px; font-size: 2.5rem;">Compare Prices instantly.</h1>
+            <p class="mb-4 text-muted" style="font-size: 1.05rem;">Search and compare products across top e-commerce and grocery platforms in India.</p>
+            
+            <!-- Global Search Form -->
+            <form action="{% url 'index' %}" method="post" id="search-form">
+                {% csrf_token %}
+                <div class="search-box">
+                    <i class='bx bx-search text-muted ms-3' style="font-size: 1.4rem;"></i>
+                    <input type="text" name="search" id="search" class="form-control search-input" required 
+                           value="{{ search_query }}" placeholder="Search iPhone, Laptop, Milk, Apples, Rice...">
+                    
+                    <!-- Hidden Category Context -->
+                    <input type="hidden" name="category" id="search-category" value="{{ selected_category }}">
+                    
+                    <button type="submit" class="btn btn-primary search-btn">Compare</button>
+                </div>
+            </form>
+            
+            <!-- Recent Searches Container -->
+            <div id="recent-searches-box" class="mt-3 d-none">
+                <span class="text-muted small me-2">Recent Searches:</span>
+                <span class="recent-searches-container" id="recent-searches-list"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clickable Category Grid (Blinkit style immediate filters) -->
+<h5 class="fw-bold mb-3 text-white">Browse Categories</h5>
+<div class="category-grid">
+    {% for category in category_cards %}
+    <a href="/?search={{ category.search|urlencode }}&category={{ category.category|urlencode }}" class="category-card">
+        <span class="category-icon">{{ category.icon }}</span>
+        <span class="category-name">{{ category.name }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Homepage Banners (carousel or promo boxes) -->
+<div class="row g-4 mb-5">
+    {% for banner in promo_banners %}
+    <div class="col-md-4">
+        <a href="/?search={{ banner.search|urlencode }}&category={{ banner.category|urlencode }}" class="promo-banner {{ banner.class }}">
+            <div>
+                <span class="badge bg-white text-dark mb-2">{{ banner.label }}</span>
+                <h4 class="fw-bold mb-1">{{ banner.title }}</h4>
+                <p class="small text-white-50 mb-0">{{ banner.description }}</p>
+            </div>
+            <span class="fw-semibold small mt-3">{{ banner.cta }} <i class='bx bx-right-arrow-alt'></i></span>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<h5 class="fw-bold mb-3 text-white">Trending Products</h5>
+<div class="quick-link-grid">
+    {% for trend in trending_products %}
+    <a href="/?search={{ trend.name|urlencode }}&category={{ trend.category|urlencode }}" class="quick-link">{{ trend.name }}</a>
+    {% endfor %}
+</div>
+
+<!-- Product Cards & Search Results -->
+{% if primary_products or accessory_products %}
+    {% if primary_products %}
+        <div class="d-flex align-items-center justify-content-between mb-4 mt-2">
+            <h4 class="fw-bold text-white mb-0">{{ category_title }}</h4>
+            <span class="text-muted small">
+                {% if active_category == 'grocery' %}
+                    Showing {{ primary_products|length }} products sorted by lowest price
+                {% else %}
+                    Showing {{ primary_products|length }} products sorted by relevance &amp; price
+                {% endif %}
+            </span>
+        </div>
+        
+        <div class="row g-4 mb-5">
+            {% for i in primary_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div>
+                        <!-- Platform Logo representing platform name -->
+                        <div class="brand-logo-container">
+                            {% if i.platform_logo %}
+                                <img src="{% static i.platform_logo %}" alt="{{ i.platform_name }}" class="brand-logo">
+                            {% else %}
+                                <span class="text-muted small">{{ i.platform_name }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Product Image -->
+                        <div class="product-image-container" style="height: 140px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; background: rgba(255,255,255,0.02); border-radius: 12px; overflow: hidden; padding: 0.5rem;">
+                            {% if i.img %}
+                                {% if i.is_static_img %}
+                                    <img src="{% static i.img %}" alt="{{ i.product_name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;" onerror="this.onerror=null;this.src='{% static 'images/default_product.png' %}';">
+                                {% else %}
+                                    <img src="{{ i.img }}" alt="{{ i.product_name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;" onerror="this.onerror=null;this.src='{% static 'images/default_product.png' %}';">
+                                {% endif %}
+                            {% else %}
+                                <i class='bx bx-image text-muted' style="font-size: 2.5rem;"></i>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Product Name -->
+                        <h6 class="product-title">
+                            {% if user.is_authenticated %}
+                                <a href="{{ i.a }}" target="_blank">{{ i.product_name }}</a>
+                            {% else %}
+                                <a href="{% url 'login' %}">{{ i.product_name }}</a>
+                            {% endif %}
+                        </h6>
+                    </div>
+                    
+                    <div>
+                        <!-- Price -->
+                        <div class="d-flex align-items-baseline gap-1">
+                            <span class="price-tag">₹{{ i.price }}</span>
+                        </div>
+                        
+                        <!-- Quantity, Discount & Delivery Details -->
+                        {% if i.quantity or i.discount or i.delivery_time %}
+                        <div class="extra-details mt-2 border-top border-secondary-subtle pt-2" style="font-size: 0.8rem; color: var(--text-muted);">
+                            {% if i.quantity %}
+                            <div class="mb-1"><i class='bx bx-purchase-tag-alt text-success-emphasis'></i> <span class="fw-semibold">Qty:</span> <span class="text-light fw-medium">{{ i.quantity }}</span></div>
+                            {% endif %}
+                            {% if i.discount and i.discount != 'Best Price' %}
+                            <div class="mb-1 text-success"><i class='bx bxs-offer'></i> {{ i.discount }}</div>
+                            {% endif %}
+                            {% if i.delivery_time %}
+                            <div><i class='bx bx-time-five text-info-emphasis'></i> <span class="fw-semibold">Delivery:</span> <span class="text-light fw-medium">{{ i.delivery_time }}</span></div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Outbound Buy Now Button -->
+                        <div class="mt-3">
+                            {% if user.is_authenticated %}
+                                <a href="{{ i.a }}" target="_blank" class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
+                                    <i class='bx bx-shopping-bag'></i> Buy Now
+                                </a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
+                                    <i class='bx bx-log-in'></i> Login to Buy
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if accessory_products %}
+        <h4 class="mb-4 fw-bold text-white mt-5">🛡 Accessories &amp; Extras</h4>
+        <div class="row g-4 mb-5">
+            {% for i in accessory_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div>
+                        <div class="brand-logo-container">
+                            {% if i.platform_logo %}
+                                <img src="{% static i.platform_logo %}" alt="{{ i.platform_name }}" class="brand-logo">
+                            {% else %}
+                                <span class="text-muted small">{{ i.platform_name }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="product-image-container" style="height: 140px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; background: rgba(255,255,255,0.02); border-radius: 12px; overflow: hidden; padding: 0.5rem;">
+                            {% if i.img %}
+                                {% if i.is_static_img %}
+                                    <img src="{% static i.img %}" alt="{{ i.product_name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;" onerror="this.onerror=null;this.src='{% static 'images/default_product.png' %}';">
+                                {% else %}
+                                    <img src="{{ i.img }}" alt="{{ i.product_name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;" onerror="this.onerror=null;this.src='{% static 'images/default_product.png' %}';">
+                                {% endif %}
+                            {% else %}
+                                <i class='bx bx-image text-muted' style="font-size: 2.5rem;"></i>
+                            {% endif %}
+                        </div>
+                        
+                        <h6 class="product-title">
+                            {% if user.is_authenticated %}
+                                <a href="{{ i.a }}" target="_blank">{{ i.product_name }}</a>
+                            {% else %}
+                                <a href="{% url 'login' %}">{{ i.product_name }}</a>
+                            {% endif %}
+                        </h6>
+                    </div>
+                    
+                    <div>
+                        <div class="price-tag">₹{{ i.price }}</div>
+                        
+                        {% if i.quantity or i.discount or i.delivery_time %}
+                        <div class="extra-details mt-2 border-top border-secondary-subtle pt-2" style="font-size: 0.8rem; color: var(--text-muted);">
+                            {% if i.quantity %}
+                            <div class="mb-1"><i class='bx bx-purchase-tag-alt text-success-emphasis'></i> <span class="fw-semibold">Qty:</span> <span class="text-light fw-medium">{{ i.quantity }}</span></div>
+                            {% endif %}
+                            {% if i.discount and i.discount != 'Best Price' %}
+                            <div class="mb-1 text-success"><i class='bx bxs-offer'></i> {{ i.discount }}</div>
+                            {% endif %}
+                            {% if i.delivery_time %}
+                            <div><i class='bx bx-time-five text-info-emphasis'></i> <span class="fw-semibold">Delivery:</span> <span class="text-light fw-medium">{{ i.delivery_time }}</span></div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mt-3">
+                            {% if user.is_authenticated %}
+                                <a href="{{ i.a }}" target="_blank" class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
+                                    <i class='bx bx-shopping-bag'></i> Buy Now
+                                </a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
+                                    <i class='bx bx-log-in'></i> Login to Buy
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% elif search_query %}
+    <div class="no-results">
+        <i class='bx bx-search-alt' style="font-size: 4rem; display: block; margin-bottom: 1rem; color: #475569;"></i>
+        <h5 class="text-white">No comparison results found for "{{ search_query }}"</h5>
+        <p class="text-muted small">Please verify spelling or try another term.</p>
+    </div>
+{% endif %}
+
+<!-- Top Platforms list -->
+<h5 class="fw-bold mb-3 text-white mt-5">Supported Platforms</h5>
+<div class="platform-container">
+    {% for platform in supported_platforms %}
+        <img src="{% static platform.logo %}" alt="{{ platform.name }}" class="platform-item">
+    {% endfor %}
+</div>
+
+<!-- JS for Recent Searches using LocalStorage -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("search");
+        const searchForm = document.getElementById("search-form");
+        const recentSearchesBox = document.getElementById("recent-searches-box");
+        const recentSearchesList = document.getElementById("recent-searches-list");
+        
+        // Load recent searches
+        let recents = [];
+        try {
+            recents = JSON.parse(localStorage.getItem("price_compare_recent_searches")) || [];
+        } catch (e) {
+            recents = [];
+        }
+        
+        // Render recent searches
+        function renderRecents() {
+            if (recents.length === 0) {
+                recentSearchesBox.classList.add("d-none");
+                return;
+            }
+            recentSearchesBox.classList.remove("d-none");
+            recentSearchesList.innerHTML = "";
+            recents.forEach(function(term) {
+                const tag = document.createElement("a");
+                tag.href = "/?search=" + encodeURIComponent(term);
+                tag.className = "recent-tag";
+                tag.textContent = term;
+                // Add click handler to preserve active category context if needed, or just standard search
+                recentSearchesList.appendChild(tag);
+            });
+        }
+        
+        renderRecents();
+        
+        // Save searches on form submit
+        searchForm.addEventListener("submit", function() {
+            const query = searchInput.value.trim();
+            if (query && !recents.includes(query)) {
+                recents.unshift(query);
+                if (recents.length > 5) {
+                    recents.pop();
+                }
+                localStorage.setItem("price_compare_recent_searches", JSON.stringify(recents));
+            }
+        });
+    });
+</script>
+{% endblock %}

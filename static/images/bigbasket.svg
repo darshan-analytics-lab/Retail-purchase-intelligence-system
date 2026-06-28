@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="100%" height="100%">
+  <rect width="120" height="40" rx="8" fill="#84C225"/>
+  <text x="12" y="25" font-family="'Inter', sans-serif" font-weight="800" font-size="14" fill="#FFFFFF" letter-spacing="-0.3px">bigbasket</text>
+  <path d="M100 15c2 0 3 2 3 4s-1 4-3 4-3-2-3-4 1-4 3-4z" fill="#E65100"/>
+</svg>
